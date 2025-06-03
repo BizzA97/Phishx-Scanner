@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 class="text-center mb-4">Phishing Link Scanner</h1>
+
+<form method="POST" id="scanForm">
+  <div class="input-group mb-3">
+    <input type="url" class="form-control" name="url" placeholder="Enter URL to scan (e.g. http://phishy-site.com)" required>
+    <button type="submit" class="btn btn-warning btn-scan">⚡ Scan</button>
+  </div>
+</form>
+
+<!-- Zeus Loader -->
+<div id="loader" class="zeus-loader text-center my-4" style="display: none;">
+  <div class="zeus-lightning"></div>
+  <p class="text-warning fs-5">Zeus is scanning the skies...</p>
+</div>
+
+<!-- Result Section -->
+{% if result %}
+<div class="result-card p-4 mb-5 rounded bg-secondary bg-opacity-25 shadow">
+  <h3 class="text-center {{ 'text-danger' if result.is_phishing else 'text-success' }}">
+    {{ '⚠️ Phishing Link Detected' if result.is_phishing else '✅ Safe Link' }}
+  </h3>
+  <p><strong>URL:</strong> {{ result.url }}</p>
+  <p><strong>Scan Summary:</strong> {{ result.message }}</p>
+
+  <hr>
+  <h5>🔍 Scan Indicators:</h5>
+  <ul>
+    <li><strong>✔️ Valid URL:</strong> {{ 'Yes' if result.details.is_valid else 'No ❌' }}</li>
+    <li><strong>📛 In Blacklist:</strong> {{ 'Yes ⚠️' if result.details.in_blacklist else 'No' }}</li>
+    <li><strong>🚩 Suspicious Patterns:</strong> {{ 'Yes ⚠️' if result.details.has_suspicious_patterns else 'No' }}</li>
+    <li>
+      <strong>📆 Domain Age:</strong>
+      {% if result.details.domain_age_days is not none %}
+        {{ result.details.domain_age_days }} days
+        {% if result.details.domain_age_days < 30 %}(⚠️ New Domain){% endif %}
+      {% else %}
+        Unknown
+      {% endif %}
+    </li>
+  </ul>
+
+  <!-- Download Report -->
+  <form method="POST" action="/download" class="d-flex gap-2 mt-3 justify-content-center">
+    <input type="hidden" name="url" value="{{ result.url }}">
+    <input type="hidden" name="is_phishing" value="{{ result.is_phishing }}">
+    <input type="hidden" name="message" value="{{ result.message }}">
+    <button name="format" value="csv" class="btn btn-outline-light">Download CSV</button>
+    <button name="format" value="pdf" class="btn btn-outline-light">Download PDF</button>
+  </form>
+</div>
+{% endif %}
+
+<!-- Scan History Table -->
+{% if history %}
+<h4 class="mb-3">🕘 Scan History</h4>
+<div class="table-responsive">
+  <table class="table table-striped table-dark table-hover align-middle">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Status</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in history|reverse %}
+      <tr>
+        <td>{{ item.url }}</td>
+        <td>
+          {% if item.is_phishing %}
+            <span class="badge bg-danger">Phishing</span>
+          {% else %}
+            <span class="badge bg-success">Safe</span>
+          {% endif %}
+        </td>
+        <td>{{ item.message }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<script>
+// Show loader on form submit
+document.getElementById('scanForm').addEventListener('submit', function () {
+  document.getElementById('loader').style.display = 'block';
+});
+</script>
+
+{% endblock %}

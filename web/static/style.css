@@ -1,0 +1,39 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #000000, #0a0a23);
+  color: #fff;
+}
+
+h1, h3 {
+  color: #FFD700; /* Gold */
+}
+
+input[type="text"] {
+  background-color: #222;
+  color: white;
+  border: 1px solid #555;
+}
+
+.btn-scan {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.result-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 30px;
+  box-shadow: 0 0 10px #ffc10788;
+}
+
+.table-dark th,
+.table-dark td {
+  background-color: #1c1c1c !important;
+  color: white;
+}
+
+a {
+  color: #00d9ff;
+}

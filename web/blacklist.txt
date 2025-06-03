@@ -1,0 +1,3 @@
+verify-login-paypal.com
+update-bank-info.com
+bit.ly
